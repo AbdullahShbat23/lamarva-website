@@ -8,3 +8,4 @@ photo_*.jpg
 !assets/docs/*.pdf
 # Arabic company profile source (HTML slides -> PDF); only the PDF is published
 profile-ar/
+preview-photos/

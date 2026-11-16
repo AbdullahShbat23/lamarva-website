@@ -239,6 +239,38 @@ h2.eyebrow { font-family: var(--font-body); line-height: 1.65; }
 .page-hero h1 { font-size: clamp(2.2rem, 5vw, 4rem); max-width: 900px; }
 .page-hero p.lead { font-size: clamp(1.05rem, 1.4vw, 1.2rem); color: var(--text-muted); max-width: 680px; }
 .page-hero .hero-ctas { margin-top: 32px; }
+/* Profile photo behind a page heading: sits on the far side and fades into black under the text. */
+.page-hero--photo .container { z-index: 1; }
+.ph-photo { position: absolute; inset-block: 0; inset-inline-end: 0; width: min(60%, 860px); pointer-events: none; }
+.ph-photo img { width: 100%; height: 100%; object-fit: cover; object-position: center 35%; }
+.ph-photo::after { content: ""; position: absolute; inset: 0; background:
+  linear-gradient(90deg, var(--black) 0%, rgba(10,10,11,.72) 38%, rgba(10,10,11,.28) 100%),
+  linear-gradient(0deg, var(--black) 0%, transparent 40%); }
+[dir="rtl"] .ph-photo::after { background:
+  linear-gradient(270deg, var(--black) 0%, rgba(10,10,11,.72) 38%, rgba(10,10,11,.28) 100%),
+  linear-gradient(0deg, var(--black) 0%, transparent 40%); }
+@media (max-width: 760px) {
+  .ph-photo { width: 100%; inset-block-end: auto; height: 440px; }
+  .ph-photo img { opacity: .7; }
+  .ph-photo::after, [dir="rtl"] .ph-photo::after { background: linear-gradient(180deg, rgba(10,10,11,.45) 0%, rgba(10,10,11,.8) 55%, var(--black) 100%); }
+}
+
+/* Homepage photo band: the company's vision next to the boardroom photo. */
+.photo-band { padding-block: clamp(56px, 8vw, 120px); border-top: 1px solid var(--line-soft); }
+.photo-band-inner { display: grid; grid-template-columns: minmax(0, 0.8fr) minmax(0, 1.2fr); gap: clamp(32px, 6vw, 96px); align-items: center; }
+.pb-photo { margin: 0; position: relative; }
+.pb-photo::before { content: ""; position: absolute; inset: 22px -22px -22px 22px; border: 1px solid var(--line); border-radius: var(--radius); }
+[dir="rtl"] .pb-photo::before { inset: 22px 22px -22px -22px; }
+.pb-photo img { position: relative; width: 100%; height: auto; aspect-ratio: 4 / 5; max-height: 640px; object-fit: cover; border-radius: var(--radius); }
+.pb-copy h2 { font-family: var(--font-body); font-size: 1rem; font-weight: 600; color: var(--gold); letter-spacing: .02em; margin-bottom: 20px; }
+.pb-statement { font-family: var(--font-display); font-size: clamp(1.45rem, 2.5vw, 2.15rem); line-height: 1.4; color: var(--text); max-width: 30ch; margin-bottom: 32px; }
+html[lang="ar"] .pb-statement { line-height: 1.7; max-width: 34ch; }
+@media (max-width: 860px) {
+  .photo-band-inner { grid-template-columns: 1fr; }
+  .pb-photo img { aspect-ratio: 4 / 3; object-position: center 40%; }
+  .pb-photo::before { inset: 14px -14px -14px 14px; }
+  [dir="rtl"] .pb-photo::before { inset: 14px 14px -14px -14px; }
+}
 .crumbs { display: flex; flex-wrap: wrap; gap: 8px; font-size: 0.85rem; color: var(--text-muted); margin-bottom: 24px; }
 .crumbs a { padding-block: 3px; } /* 24px+ tap target */
 .crumbs a:hover { color: var(--gold-light); }

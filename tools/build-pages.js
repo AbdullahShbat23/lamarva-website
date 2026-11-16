@@ -19,7 +19,7 @@ const vm = require("vm");
 const crypto = require("crypto");
 
 const SITE_URL = "https://abdullahshbat23.github.io/lamarva-website/";
-const VERSION = 9;
+const VERSION = 10;
 const ROOT = path.join(__dirname, "..");
 const LANGS = ["en", "ar"];
 const OG_IMAGE = { file: "assets/img/og-image.jpg", width: 1200, height: 630 };

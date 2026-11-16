@@ -165,12 +165,19 @@
         return (c.href ? '<a href="' + c.href + '">' + c.t + "</a>" : '<span aria-current="page">' + c.t + "</span>") + sep;
       }).join(" ") + "</nav>";
     }
-    return '<section class="page-hero"><div class="container">' + crumbs +
+    var photo = o.photo ? '<div class="ph-photo" aria-hidden="true"><img src="assets/img/photos/' + o.photo + '.webp" alt="" decoding="async" fetchpriority="high"></div>' : "";
+    return '<section class="page-hero' + (o.photo ? " page-hero--photo" : "") + '">' + photo + '<div class="container">' + crumbs +
       (o.eyebrow ? '<span class="eyebrow reveal">' + o.eyebrow + "</span>" : "") +
       '<h1 class="reveal d1">' + o.title + "</h1>" +
       (o.lead ? '<p class="lead reveal d2">' + o.lead + "</p>" : "") +
       (o.ctas ? '<div class="hero-ctas reveal d3">' + o.ctas + "</div>" : "") +
       (o.extra || "") + "</div></section>";
+  }
+  // Which profile photo sits behind each service page's heading.
+  var SERVICE_PHOTOS = { "company-formation": "mainland", "visas-residency": "investor", "government-services": "freezone", "company-management": "about", "banking-tax": "closing" };
+  function servicePhoto(s, sub) {
+    if (s.slug === "company-formation" && sub && sub.slug === "free-zone") return "freezone";
+    return SERVICE_PHOTOS[s.slug] || "";
   }
   function primaryCtas() {
     return '<a class="btn btn--gold" href="contact.html">' + T.common.bookCta + arrow() + "</a>" +
@@ -334,6 +341,9 @@
 
       '<section class="section"><div class="container">' + sectionHead(h.services.eyebrow, h.services.title, h.services.text) + '<div class="svc-grid">' + svcCards + "</div></div></section>" +
 
+      '<section class="photo-band"><div class="container photo-band-inner"><figure class="pb-photo reveal"><img src="assets/img/photos/cover.webp" alt="" width="800" height="1000" loading="lazy" decoding="async"></figure>' +
+      '<div class="pb-copy reveal d1"><h2>' + T.about.vision.t + '</h2><p class="pb-statement">' + T.about.vision.d + '</p><a class="link-arrow" href="about.html">' + T.nav.about + arrow() + "</a></div></div></section>" +
+
       '<section class="section section--ink"><div class="container journey"><div class="journey-sticky">' + sectionHead(h.journey.eyebrow, h.journey.title, h.journey.text) +
       '<div class="journey-visual"><svg class="journey-ring" viewBox="0 0 100 100"><defs><linearGradient id="goldStroke" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#f1dca6"/><stop offset="1" stop-color="#8f6d33"/></linearGradient></defs><circle class="track" cx="50" cy="50" r="46" fill="none" stroke-width="1.2"/><circle class="prog" id="jProg" cx="50" cy="50" r="46" fill="none" stroke-width="2.2" stroke-linecap="round" stroke-dasharray="289.03" stroke-dashoffset="240.9" transform="rotate(-90 50 50)"/></svg>' +
       '<div class="journey-center"><div><b class="gold-text" id="jNum">01</b><span>' + h.journey.ringLabel + " / " + num(h.journey.steps.length) + "</span></div></div></div></div>" +
@@ -411,7 +421,7 @@
       '<div class="svc-block" id="faq"><h2 class="reveal">' + b.faqTitle + '</h2><div class="reveal">' + faqList(s.faq) + "</div></div>" +
       (related.length ? '<div class="svc-block" id="related"><h2 class="reveal">' + b.relatedTitle + '</h2><div class="grid grid-2">' + related.map(articleCard).join("") + "</div></div>" : "");
 
-    return pageHero({ crumbs: crumbs, eyebrow: sub ? s.title : sp.eyebrow, title: sub ? sub.title : s.heroTitle, lead: sub ? sub.text : s.heroText, ctas: primaryCtas(), extra: tabs }) +
+    return pageHero({ crumbs: crumbs, eyebrow: sub ? s.title : sp.eyebrow, title: sub ? sub.title : s.heroTitle, lead: sub ? sub.text : s.heroText, ctas: primaryCtas(), extra: tabs, photo: servicePhoto(s, sub) }) +
       '<section class="section"><div class="container svc-layout"><aside class="svc-aside"><nav aria-label="' + (sub ? sub.title : s.title) + '">' +
       navItems.map(function (n) { return '<a href="#' + n[0] + '">' + n[1] + "</a>"; }).join("") +
       '</nav><div class="aside-cta"><p class="aside-title">' + sp.asideTitle + "</p><p>" + sp.asideText + '</p><a class="btn btn--gold btn--sm btn--block" href="contact.html">' + T.common.bookCta + "</a></div></aside>" +
@@ -422,7 +432,7 @@
   PAGES.investors = function () {
     var v = T.investors;
     var who = whoCards();
-    return pageHero({ crumbs: [{ t: T.nav.home, href: "index.html" }, { t: T.nav.investors }], eyebrow: v.eyebrow, title: v.title, lead: v.lead, ctas: primaryCtas() }) +
+    return pageHero({ crumbs: [{ t: T.nav.home, href: "index.html" }, { t: T.nav.investors }], eyebrow: v.eyebrow, title: v.title, lead: v.lead, ctas: primaryCtas(), photo: "closing" }) +
       '<section class="section"><div class="container journey"><div class="journey-sticky">' + sectionHead(v.journeyEyebrow, v.journeyTitle) +
       '<div class="card reveal"><h3>' + v.remoteTitle + "</h3>" + checkList(v.remote) + '<p class="muted" style="margin:20px 0 0;font-size:.92rem">' + v.remoteNote + "</p></div></div>" +
       '<div><ol class="timeline">' + v.steps.map(function (s, i) { return '<li class="reveal d' + ((i % 3) + 1) + '"><h4>' + s.t + "</h4><p>" + s.d + "</p></li>"; }).join("") + "</ol></div></div></section>" +
@@ -442,7 +452,7 @@
 
   PAGES.about = function () {
     var a = T.about;
-    return pageHero({ crumbs: [{ t: T.nav.home, href: "index.html" }, { t: T.nav.about }], eyebrow: a.eyebrow, title: a.title, lead: a.lead }) +
+    return pageHero({ crumbs: [{ t: T.nav.home, href: "index.html" }, { t: T.nav.about }], eyebrow: a.eyebrow, title: a.title, lead: a.lead, photo: "about" }) +
       '<section class="section"><div class="container vm-grid">' +
       '<div class="reveal"><h2 class="eyebrow">' + a.storyTitle + "</h2>" + a.story.map(function (p) { return '<p style="font-size:1.1rem">' + p + "</p>"; }).join("") + (a.storyNote ? '<p class="sample-flag" style="display:inline-block">' + a.storyNote + "</p>" : "") +
       '<a class="btn btn--ghost" style="margin-top:12px" href="' + T.common.profileFile + '" target="_blank" rel="noopener">' + ico("doc") + T.common.profileDownload + "</a></div>" +
