@@ -23,10 +23,62 @@
 
   /* ---------- State ---------- */
   var params = new URLSearchParams(location.search);
-  var page = document.body.getAttribute("data-page") || "home";
-  var lang = getStored("lmv-lang") || "en";
-  if (params.get("lang") === "ar" || params.get("lang") === "en") { lang = params.get("lang"); setStored("lmv-lang", lang); }
+  var bodyData = document.body.dataset;
+  var page = bodyData.page || "home";
+  // Pages written by tools/build-pages.js carry their language and item (service, story...)
+  // in data-* attributes, so every page and language has its own address for Google and
+  // link previews. Older addresses (service.html?s=...&lang=ar) still work and are forwarded.
+  var fixedLang = bodyData.lang === "ar" || bodyData.lang === "en" ? bodyData.lang : null;
+  var lang = fixedLang || getStored("lmv-lang") || "en";
+  if (!fixedLang && (params.get("lang") === "ar" || params.get("lang") === "en")) lang = params.get("lang");
+  function arg(k) { return own(bodyData, k) && bodyData[k] !== "" ? bodyData[k] : params.get(k); }
   var T;
+
+  /* ---------- Page addresses ---------- */
+  var FILE_FOR = { home: "index", how: "how-we-work", stories: "success-stories", thanks: "thank-you" };
+  var PAGE_FOR = { index: "home", "how-we-work": "how", "success-stories": "stories", "thank-you": "thanks" };
+  var ITEM_KEYS = ["s", "sub", "id", "p", "lang"];
+  // Keep in step with fileName() in tools/build-pages.js.
+  function pageFile(pg, o, lng) {
+    o = o || {};
+    var f = FILE_FOR[pg] || pg;
+    if (pg === "service" && o.s) f = "service-" + o.s + (o.sub ? "-" + o.sub : "");
+    else if ((pg === "story" || pg === "article") && o.id) f = pg + "-" + o.id;
+    else if (pg === "legal" && o.p) f = "legal-" + o.p;
+    return f + ((lng || lang) === "ar" ? "-ar" : "") + ".html";
+  }
+  function restOfQuery(q) {
+    ITEM_KEYS.forEach(function (k) { q.delete(k); });
+    var rest = q.toString();
+    return rest ? "?" + rest : "";
+  }
+  // Templates write plain links (service.html?s=x, about.html#team); point them at this language's page.
+  function localizeHref(h) {
+    var m = /^([a-z0-9-]+)\.html(\?[^#]*)?(#.*)?$/.exec(h);
+    if (!m) return h;
+    var q = new URLSearchParams((m[2] || "").slice(1));
+    var o = { s: q.get("s"), sub: q.get("sub"), id: q.get("id"), p: q.get("p") };
+    return pageFile(PAGE_FOR[m[1]] || m[1], o) + restOfQuery(q) + (m[3] || "");
+  }
+  function localizeLinks(root) {
+    root.querySelectorAll("a[href]").forEach(function (a) { a.setAttribute("href", localizeHref(a.getAttribute("href"))); });
+  }
+  // The address of the page being viewed, in the given language.
+  function currentPageUrl(lng) {
+    return pageFile(page, { s: arg("s"), sub: arg("sub"), id: arg("id"), p: arg("p") }, lng) + restOfQuery(new URLSearchParams(location.search)) + location.hash;
+  }
+  // Forward old-style and wrong-language addresses to the page's own address. Returns true when leaving.
+  function redirectIfNeeded() {
+    if (page === "404") return false;
+    var here = location.pathname.split("/").pop() || "index.html";
+    var target = null;
+    if (!fixedLang) target = currentPageUrl(lang);                                 // old service.html?s=... shells
+    else if (params.get("lang") && params.get("lang") !== fixedLang && (params.get("lang") === "ar" || params.get("lang") === "en")) target = currentPageUrl(params.get("lang"));
+    else if (page === "home" && fixedLang === "en" && getStored("lmv-lang") === "ar" && document.referrer.indexOf(location.origin) !== 0) target = pageFile("home", {}, "ar"); // returning Arabic visitor
+    if (!target || target.split(/[?#]/)[0] === here) return false;
+    location.replace(target);
+    return true;
+  }
 
   function getStored(k) { try { return localStorage.getItem(k); } catch (e) { return null; } }
   function setStored(k, v) { try { localStorage.setItem(k, v); } catch (e) {} }
@@ -329,9 +381,9 @@
   };
 
   PAGES.service = function () {
-    var s = findService(params.get("s"));
+    var s = findService(arg("s"));
     if (!s) return PAGES.notFound();
-    var sub = s.subs.filter(function (x) { return x.slug === params.get("sub"); })[0];
+    var sub = s.subs.filter(function (x) { return x.slug === arg("sub"); })[0];
     var sp = T.servicesPage, b = sp.blocks;
     document.title = (sub ? sub.title : s.title) + " | " + T.meta.siteName;
 
@@ -411,7 +463,7 @@
   };
 
   PAGES.story = function () {
-    var st = findStory(params.get("id"));
+    var st = findStory(arg("id"));
     if (!st) return PAGES.notFound();
     var s = T.storiesPage;
     document.title = st.title + " | " + T.meta.siteName;
@@ -432,7 +484,7 @@
   };
 
   PAGES.article = function () {
-    var a = findArticle(params.get("id"));
+    var a = findArticle(arg("id"));
     if (!a) return PAGES.notFound();
     document.title = a.title + " | " + T.meta.siteName;
     var body = a.body.map(function (b) {
@@ -449,7 +501,7 @@
   };
 
   PAGES.legal = function () {
-    var key = params.get("p");
+    var key = arg("p");
     var p = own(T.legal.pages, key) ? T.legal.pages[key] : T.legal.pages.privacy;
     document.title = p.title + " | " + T.meta.siteName;
     return pageHero({ crumbs: [{ t: T.nav.home, href: "index.html" }, { t: p.title }], title: p.title }) +
@@ -523,6 +575,7 @@
       html = renderResult();
     }
     shell.innerHTML = html;
+    localizeLinks(shell);
     var focusEl = shell.querySelector("h2");
     if (focusEl && adv._moved) { focusEl.setAttribute("tabindex", "-1"); focusEl.focus({ preventScroll: true }); }
   }
@@ -682,7 +735,7 @@
       setSession("lmv-booking", { name: form.name.value.trim() });
       // The advisor answers and contact details have served their purpose; don't leave them in the browser.
       try { sessionStorage.removeItem("lmv-advisor"); } catch (err) {}
-      location.href = "thank-you.html";
+      location.href = pageFile("thanks");
     });
     form.addEventListener("input", function (e) {
       var field = e.target.closest(".field");
@@ -752,8 +805,10 @@
     ui.setDrawer = setDrawer;
 
     document.getElementById("langSwitch").addEventListener("click", function () {
-      lang = lang === "en" ? "ar" : "en";
-      setStored("lmv-lang", lang);
+      var next = lang === "en" ? "ar" : "en";
+      setStored("lmv-lang", next);
+      if (fixedLang) { location.href = currentPageUrl(next); return; } // each language has its own page
+      lang = next;
       document.body.style.overflow = "";
       renderAll();
       window.scrollTo(0, 0);
@@ -875,15 +930,18 @@
     initJourney();
     initSpotlight();
     initServiceAside();
+    localizeLinks(document);
   }
 
-  bindGlobal();
-  renderAll();
-  // Content is drawn by JS after load, so the browser's own jump to #anchor
-  // (e.g. about.html#team) found nothing; do it now that the target exists.
-  if (location.hash.length > 1) {
-    var anchor = null;
-    try { anchor = document.getElementById(decodeURIComponent(location.hash.slice(1))); } catch (err) { /* malformed %-escape in the address */ }
-    if (anchor) anchor.scrollIntoView();
+  if (!redirectIfNeeded()) {
+    bindGlobal();
+    renderAll();
+    // Content is drawn by JS after load, so the browser's own jump to #anchor
+    // (e.g. about.html#team) found nothing; do it now that the target exists.
+    if (location.hash.length > 1) {
+      var anchor = null;
+      try { anchor = document.getElementById(decodeURIComponent(location.hash.slice(1))); } catch (err) { /* malformed %-escape in the address */ }
+      if (anchor) anchor.scrollIntoView();
+    }
   }
 })();
