@@ -258,8 +258,7 @@
       '<a class="d-link" href="success-stories.html">' + n.stories + "</a>" +
       '<a class="d-link" href="knowledge.html">' + n.knowledge + "</a>" +
       '<a class="btn btn--gold btn--block" href="contact.html">' + n.book + arrow() + "</a>" +
-      "</div>" +
-      '<a class="wa-float" href="' + waLink() + '" target="_blank" rel="noopener" aria-label="' + T.common.whatsappAria + '">' + ico("whatsapp") + "</a>";
+      "</div>";
   }
 
   function renderFooter() {

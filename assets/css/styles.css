@@ -190,18 +190,6 @@ h2.eyebrow { font-family: var(--font-body); line-height: 1.65; }
   .mega { display: none; }
 }
 
-/* ---------- Floating WhatsApp ---------- */
-.wa-float {
-  position: fixed; inset-inline-end: 20px; bottom: 20px; z-index: 90;
-  width: 58px; height: 58px; border-radius: 50%; display: grid; place-items: center;
-  background: #1fae5a; color: #fff; box-shadow: 0 12px 30px -8px rgba(31, 174, 90, 0.6);
-  transition: transform .25s var(--ease);
-}
-.wa-float:hover { transform: scale(1.07); }
-.wa-float svg { width: 30px; height: 30px; }
-.wa-float::after { content: ""; position: absolute; inset: -6px; border-radius: 50%; border: 2px solid rgba(31,174,90,.45); animation: pulse 2.4s infinite; }
-@keyframes pulse { 0% { transform: scale(.9); opacity: 1; } 100% { transform: scale(1.35); opacity: 0; } }
-.reduce-motion .wa-float::after { animation: none; display: none; }
 
 /* ---------- Hero ---------- */
 .hero { min-height: 100svh; display: flex; align-items: center; position: relative; overflow: hidden; padding-top: calc(var(--header-h) + 40px); padding-bottom: 80px; }
@@ -632,10 +620,8 @@ html[lang="ar"] .site-footer h4 { letter-spacing: 0; font-size: .9rem; }
   .booking-bar .btns, .booking-bar .btn { width: 100%; }
   .logo-img { height: 38px; }
   .lang-switch { padding: 7px 11px; }
-  .wa-float { width: 54px; height: 54px; inset-inline-end: 16px; bottom: 16px; }
-  .footer-bottom { padding-bottom: 90px; }
 }
 @media (prefers-reduced-motion: reduce) {
   .reveal { opacity: 1; transform: none; transition: none; }
-  .mono-spin, .mono-orbit, .wa-float::after, .globe .route, .scroll-cue i { animation: none !important; }
+  .mono-spin, .mono-orbit, .globe .route, .scroll-cue i { animation: none !important; }
 }
