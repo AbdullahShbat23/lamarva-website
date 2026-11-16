@@ -63,6 +63,9 @@ window.CONTENT.en = {
     allArticles: "All guides",
     exploreAll: "Explore all services",
     duration: "Indicative duration",
+    profileDownload: "Download company profile (PDF)",
+    logoDownload: "Download logo",
+    downloads: "Downloads",
     stepWord: "Step",
     of: "of"
   },

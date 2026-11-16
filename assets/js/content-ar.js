@@ -62,6 +62,9 @@ window.CONTENT.ar = {
     allArticles: "جميع الأدلة",
     exploreAll: "استكشف جميع الخدمات",
     duration: "المدة التقديرية",
+    profileDownload: "تحميل الملف التعريفي (PDF بالإنجليزية)",
+    logoDownload: "تحميل الشعار",
+    downloads: "التحميلات",
     stepWord: "الخطوة",
     of: "من"
   },

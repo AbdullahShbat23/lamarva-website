@@ -3,3 +3,6 @@
 photo_*.jpg
 # Local tooling
 .claude/
+
+# Published documents
+!assets/docs/*.pdf
