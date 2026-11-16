@@ -1,0 +1,5 @@
+# Source documents — kept local, not published
+*.pdf
+photo_*.jpg
+# Local tooling
+.claude/
