@@ -6,3 +6,5 @@ photo_*.jpg
 
 # Published documents
 !assets/docs/*.pdf
+# Arabic company profile source (HTML slides -> PDF); only the PDF is published
+profile-ar/

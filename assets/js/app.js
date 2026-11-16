@@ -270,7 +270,7 @@
       "<div><h4>" + f.services + "</h4><ul>" + T.services.map(function (s) { return '<li><a href="' + svcHref(s.slug) + '">' + s.title + "</a></li>"; }).join("") + "</ul></div>" +
       "<div><h4>" + f.company + '</h4><ul><li><a href="about.html">' + f.links.about + '</a></li><li><a href="how-we-work.html">' + f.links.how + '</a></li><li><a href="success-stories.html">' + f.links.stories + '</a></li><li><a href="investors.html">' + f.links.investors + '</a></li><li><a href="advisor.html">' + f.links.advisor + "</a></li></ul></div>" +
       "<div><h4>" + f.knowledge + '</h4><ul><li><a href="knowledge.html">' + f.links.guides + "</a></li>" + T.articles.map(function (a) { return '<li><a href="article.html?id=' + a.id + '">' + a.title.split(":")[0] + "</a></li>"; }).join("") +
-      '<li><a href="assets/docs/LAMARVA-Company-Profile.pdf" target="_blank" rel="noopener">' + T.common.profileDownload + "</a></li>" +
+      '<li><a href="' + T.common.profileFile + '" target="_blank" rel="noopener">' + T.common.profileDownload + "</a></li>" +
       '<li><a href="assets/docs/LAMARVA-Logo.jpg" download>' + T.common.logoDownload + "</a></li></ul></div>" +
       "<div><h4>" + f.contact + '</h4><ul class="footer-contact">' +
       "<li>" + ico("phone") + '<a href="tel:' + CONFIG.phone.replace(/\s/g, "") + '" dir="ltr">' + CONFIG.phone + "</a></li>" +
@@ -445,7 +445,7 @@
     return pageHero({ crumbs: [{ t: T.nav.home, href: "index.html" }, { t: T.nav.about }], eyebrow: a.eyebrow, title: a.title, lead: a.lead }) +
       '<section class="section"><div class="container vm-grid">' +
       '<div class="reveal"><h2 class="eyebrow">' + a.storyTitle + "</h2>" + a.story.map(function (p) { return '<p style="font-size:1.1rem">' + p + "</p>"; }).join("") + (a.storyNote ? '<p class="sample-flag" style="display:inline-block">' + a.storyNote + "</p>" : "") +
-      '<a class="btn btn--ghost" style="margin-top:12px" href="assets/docs/LAMARVA-Company-Profile.pdf" target="_blank" rel="noopener">' + ico("doc") + T.common.profileDownload + "</a></div>" +
+      '<a class="btn btn--ghost" style="margin-top:12px" href="' + T.common.profileFile + '" target="_blank" rel="noopener">' + ico("doc") + T.common.profileDownload + "</a></div>" +
       '<div class="card reveal d1"><span class="ico">' + ico("compass") + "</span><h3>" + a.vision.t + "</h3><p>" + a.vision.d + "</p></div>" +
       '<div class="card reveal d2"><span class="ico">' + ico("target") + "</span><h3>" + a.mission.t + "</h3><p>" + a.mission.d + "</p></div>" +
       "</div></section>" +

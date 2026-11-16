@@ -64,6 +64,7 @@ window.CONTENT.en = {
     exploreAll: "Explore all services",
     duration: "Indicative duration",
     profileDownload: "Download company profile (PDF)",
+    profileFile: "assets/docs/LAMARVA-Company-Profile.pdf",
     logoDownload: "Download logo",
     downloads: "Downloads",
     stepWord: "Step",
