@@ -99,6 +99,8 @@
   function findArticle(id) { return T.articles.filter(function (a) { return a.id === id; })[0]; }
   function findStory(id) { return T.stories.filter(function (a) { return a.id === id; })[0]; }
   function num(n) { return n < 10 ? "0" + n : "" + n; }
+  // Lookups keyed by URL values must ignore inherited names like "constructor".
+  function own(o, k) { return k != null && Object.prototype.hasOwnProperty.call(o, k); }
 
   function sectionHead(eyebrow, title, text, center) {
     return '<div class="section-head reveal' + (center ? " center" : "") + '"><span class="eyebrow">' + eyebrow + "</span><h2>" + title + "</h2>" + (text ? "<p>" + text + "</p>" : "") + "</div>";
@@ -126,6 +128,14 @@
     return '<div class="booking-bar reveal"><div><h3>' + T.common.bookingBarTitle + "</h3><p>" + T.common.bookingBarText + '</p></div><div class="btns">' +
       '<a class="btn btn--dark" href="contact.html">' + T.common.bookCta + arrow() + "</a>" +
       '<a class="btn btn--ghost btn--wa" href="' + waLink() + '" target="_blank" rel="noopener">' + ico("whatsapp") + T.common.whatsapp + "</a></div></div>";
+  }
+  function bookingSection(spaceAbove) {
+    return '<section class="section--tight"><div class="container"' + (spaceAbove ? ' style="padding-top:80px"' : "") + ">" + bookingBar() + "</div></section><div style=\"height:80px\"></div>";
+  }
+  function whoCards() {
+    return T.home.who.items.map(function (w, i) {
+      return '<div class="who-card reveal d' + (i + 1) + '"><span class="ico">' + ico(w.icon) + "</span><h3>" + w.t + "</h3><p>" + w.d + "</p></div>";
+    }).join("");
   }
   function ctaBand(title, text) {
     return '<section class="section"><div class="container"><div class="cta-band reveal">' +
@@ -255,9 +265,7 @@
     var why = h.why.items.map(function (w, i) {
       return '<div class="card why-card reveal d' + ((i % 3) + 1) + '"><span class="ico">' + ico(w.icon) + "</span><h3>" + w.t + "</h3><p>" + w.d + "</p></div>";
     }).join("");
-    var who = h.who.items.map(function (w, i) {
-      return '<div class="who-card reveal d' + (i + 1) + '"><span class="ico">' + ico(w.icon) + "</span><h3>" + w.t + "</h3><p>" + w.d + "</p></div>";
-    }).join("");
+    var who = whoCards();
 
     return '<section class="hero"><div class="hero-grid-bg"></div><div class="container hero-inner">' +
       '<div><span class="eyebrow reveal">' + h.hero.eyebrow + '</span><h1 class="reveal d1">' + h.hero.title + '</h1><p class="hero-lead reveal d2">' + h.hero.lead + "</p>" +
@@ -315,7 +323,7 @@
     }).join("");
     return pageHero({ crumbs: [{ t: T.nav.home, href: "index.html" }, { t: T.nav.services }], eyebrow: sp.eyebrow, title: sp.title, lead: sp.lead, ctas: '<a class="btn btn--gold" href="advisor.html">' + ico("spark") + T.common.tryAdvisor + '</a><a class="btn btn--ghost" href="contact.html">' + T.common.bookCta + "</a>" }) +
       '<section class="section"><div class="container">' + rows + "</div></section>" +
-      '<section class="section--tight"><div class="container">' + bookingBar() + "</div></section><div style='height:80px'></div>";
+      bookingSection();
   };
 
   PAGES.service = function () {
@@ -352,14 +360,12 @@
       navItems.map(function (n) { return '<a href="#' + n[0] + '">' + n[1] + "</a>"; }).join("") +
       '</nav><div class="aside-cta"><h4>' + sp.asideTitle + "</h4><p>" + sp.asideText + '</p><a class="btn btn--gold btn--sm btn--block" href="contact.html">' + T.common.bookCta + "</a></div></aside>" +
       "<div>" + blocks + "</div></div></section>" +
-      '<section class="section--tight"><div class="container">' + bookingBar() + "</div></section><div style='height:80px'></div>";
+      bookingSection();
   };
 
   PAGES.investors = function () {
     var v = T.investors;
-    var who = T.home.who.items.map(function (w, i) {
-      return '<div class="who-card reveal d' + (i + 1) + '"><span class="ico">' + ico(w.icon) + "</span><h3>" + w.t + "</h3><p>" + w.d + "</p></div>";
-    }).join("");
+    var who = whoCards();
     return pageHero({ crumbs: [{ t: T.nav.home, href: "index.html" }, { t: T.nav.investors }], eyebrow: v.eyebrow, title: v.title, lead: v.lead, ctas: primaryCtas() }) +
       '<section class="section"><div class="container journey"><div class="journey-sticky">' + sectionHead(v.journeyEyebrow, v.journeyTitle) +
       '<div class="card reveal"><h3>' + v.remoteTitle + "</h3>" + checkList(v.remote) + '<p class="muted" style="margin:20px 0 0;font-size:.92rem">' + v.remoteNote + "</p></div></div>" +
@@ -375,7 +381,7 @@
         return '<div class="card step6 reveal d' + ((i % 3) + 1) + '"><span class="sn gold-text"></span><h3>' + s.t + "</h3><p>" + s.d + "</p></div>";
       }).join("") + "</div></div></section>" +
       '<section class="section section--light"><div class="container advisor-preview"><div>' + sectionHead(T.about.eyebrow, h.promiseTitle) + '</div><div class="reveal">' + checkList(h.promise) + '<div class="price-promise" style="background:#fff;border-color:rgba(156,122,60,.3)">' + ico("shield") + '<p style="color:var(--text-dark)">' + T.common.noPrices + "</p></div></div></div></section>" +
-      '<section class="section--tight"><div class="container" style="padding-top:80px">' + bookingBar() + "</div></section><div style='height:80px'></div>";
+      bookingSection(true);
   };
 
   PAGES.about = function () {
@@ -420,7 +426,7 @@
     var k = T.knowledgePage;
     return pageHero({ crumbs: [{ t: T.nav.home, href: "index.html" }, { t: T.nav.knowledge }], eyebrow: k.eyebrow, title: k.title, lead: k.lead }) +
       '<section class="section"><div class="container"><div class="grid grid-3">' + T.articles.map(articleCard).join("") + '</div><p class="muted" style="margin-top:32px;font-size:.9rem">' + k.disclaimer + "</p></div></section>" +
-      '<section class="section--tight"><div class="container">' + bookingBar() + "</div></section><div style='height:80px'></div>";
+      bookingSection();
   };
 
   PAGES.article = function () {
@@ -442,7 +448,7 @@
 
   PAGES.legal = function () {
     var key = params.get("p");
-    var p = T.legal.pages[key] || T.legal.pages.privacy;
+    var p = own(T.legal.pages, key) ? T.legal.pages[key] : T.legal.pages.privacy;
     document.title = p.title + " | " + T.meta.siteName;
     return pageHero({ crumbs: [{ t: T.nav.home, href: "index.html" }, { t: p.title }], title: p.title }) +
       '<section class="section"><div class="container legal"><div class="draft-banner">' + T.legal.draft + "</div>" +
@@ -461,17 +467,23 @@
   PAGES.advisor = function () {
     var a = T.advisor;
     var start = params.get("path");
-    if (start && a.questions[start] && adv.step === "welcome" && !adv._init) { adv.path = start; adv.step = "q"; adv.qi = 0; }
+    if (own(a.questions, start) && adv.step === "welcome" && !adv._init) { adv.path = start; adv.step = "q"; adv.qi = 0; }
     adv._init = true;
     return pageHero({ crumbs: [{ t: T.nav.home, href: "index.html" }, { t: T.nav.advisor }], eyebrow: a.eyebrow, title: a.welcomeTitle, lead: a.welcomeText }) +
       '<section class="section"><div class="container"><div class="advisor-shell" id="advisorShell" aria-live="polite"></div></div></section>';
   };
 
-  function advTotal() { return 1 + 3 + 1; }
+  // Path question + that path's questions + optional contact screen.
+  // Before a path is chosen, assume the longest path.
+  function advTotal() {
+    var q = T.advisor.questions;
+    var n = adv.path ? q[adv.path].length : Math.max.apply(null, Object.keys(q).map(function (k) { return q[k].length; }));
+    return n + 2;
+  }
   function advIndex() {
     if (adv.step === "q1") return 1;
     if (adv.step === "q") return 2 + adv.qi;
-    if (adv.step === "contact") return 5;
+    if (adv.step === "contact") return advTotal();
     return 0;
   }
   function progressBar() {
@@ -675,25 +687,50 @@
   PAGES.thanks = function () {
     var t = T.thanks, b = getSession("lmv-booking");
     var name = b && b.name ? (lang === "ar" ? " يا " : ", ") + esc(b.name.split(" ")[0]) : "";
-    return '<section class="nf"><div style="max-width:640px"><div class="thanks-icon">' + ico("check") + '</div><h1 style="font-size:clamp(2rem,4.5vw,3.2rem)">' + t.title.replace("{name}", name) + '</h1><p class="muted" style="font-size:1.1rem">' + t.text + '</p><div class="hero-ctas" style="justify-content:center;margin-top:28px"><a class="btn btn--gold" href="index.html">' + t.home + '</a><a class="btn btn--ghost" href="knowledge.html">' + t.read + '</a><a class="btn btn--ghost" href="' + waLink() + '" target="_blank" rel="noopener">' + ico("whatsapp") + T.common.whatsapp + "</a></div></div></section>";
+    return '<section class="nf"><div style="max-width:640px"><div class="thanks-icon">' + ico("check") + '</div><h1 style="font-size:clamp(2rem,4.5vw,3.2rem)">' + t.title.replace("{name}", function () { return name; }) + '</h1><p class="muted" style="font-size:1.1rem">' + t.text + '</p><div class="hero-ctas" style="justify-content:center;margin-top:28px"><a class="btn btn--gold" href="index.html">' + t.home + '</a><a class="btn btn--ghost" href="knowledge.html">' + t.read + '</a><a class="btn btn--ghost" href="' + waLink() + '" target="_blank" rel="noopener">' + ico("whatsapp") + T.common.whatsapp + "</a></div></div></section>";
   };
 
   /* ---------- Enhancements ---------- */
+  // Current header controls. Global listeners (bound once in bindGlobal) call
+  // whichever version the latest render created, so re-rendering on a
+  // language switch never stacks up duplicate window/document listeners.
+  var ui = { setMega: null, setDrawer: null };
+  var observers = [];
+  function watch(io) { observers.push(io); return io; }
+
+  function syncHeaderScroll() {
+    var h = document.getElementById("siteHeader");
+    if (h) h.classList.toggle("scrolled", window.scrollY > 10);
+  }
+
+  function bindGlobal() {
+    window.addEventListener("scroll", syncHeaderScroll, { passive: true });
+    document.addEventListener("keydown", function (e) {
+      if (e.key === "Escape" && ui.setMega) { ui.setMega(false); ui.setDrawer(false); }
+    });
+    // Close the mobile drawer (and unlock scrolling) if the window grows to desktop width.
+    var wide = window.matchMedia("(min-width: 1241px)");
+    var onWide = function () { if (wide.matches && ui.setDrawer) ui.setDrawer(false); };
+    if (wide.addEventListener) wide.addEventListener("change", onWide); else wide.addListener(onWide);
+  }
+
   function initHeader() {
     var header = document.getElementById("siteHeader");
-    var onScroll = function () { header.classList.toggle("scrolled", window.scrollY > 10); };
-    onScroll();
-    window.addEventListener("scroll", onScroll, { passive: true });
+    syncHeaderScroll();
 
     var megaBtn = document.getElementById("megaBtn"), mega = document.getElementById("mega"), closeT;
     function setMega(open) { mega.classList.toggle("open", open); megaBtn.setAttribute("aria-expanded", String(open)); header.classList.toggle("menu-open", open); }
-    megaBtn.addEventListener("click", function () { setMega(!mega.classList.contains("open")); });
+    megaBtn.addEventListener("click", function (e) {
+      var open = !mega.classList.contains("open");
+      setMega(open);
+      // Opened from the keyboard (detail 0): move focus into the panel so its links come next.
+      if (open && e.detail === 0) { var first = mega.querySelector("a"); if (first) first.focus(); }
+    });
     [megaBtn, mega].forEach(function (el) {
       el.addEventListener("mouseenter", function () { clearTimeout(closeT); if (window.matchMedia("(hover: hover)").matches) setMega(true); });
       el.addEventListener("mouseleave", function () { closeT = setTimeout(function () { setMega(false); }, 180); });
+      el.addEventListener("focusout", function (e) { if (!mega.contains(e.relatedTarget) && e.relatedTarget !== megaBtn) setMega(false); });
     });
-    document.addEventListener("keydown", function (e) { if (e.key === "Escape") { setMega(false); setDrawer(false); } });
-    mega.addEventListener("focusout", function (e) { if (!mega.contains(e.relatedTarget) && e.relatedTarget !== megaBtn) setMega(false); });
 
     var toggle = document.getElementById("menuToggle"), drawer = document.getElementById("drawer");
     function setDrawer(open) {
@@ -705,6 +742,8 @@
       document.body.style.overflow = open ? "hidden" : "";
     }
     toggle.addEventListener("click", function () { setDrawer(!drawer.classList.contains("open")); });
+    ui.setMega = setMega;
+    ui.setDrawer = setDrawer;
 
     document.getElementById("langSwitch").addEventListener("click", function () {
       lang = lang === "en" ? "ar" : "en";
@@ -729,9 +768,9 @@
   function initReveal() {
     var els = document.querySelectorAll(".reveal");
     if (reduceMotion() || !("IntersectionObserver" in window)) { els.forEach(function (el) { el.classList.add("in"); }); return; }
-    var io = new IntersectionObserver(function (entries) {
+    var io = watch(new IntersectionObserver(function (entries) {
       entries.forEach(function (en) { if (en.isIntersecting) { en.target.classList.add("in"); io.unobserve(en.target); } });
-    }, { threshold: 0.12, rootMargin: "0px 0px -40px 0px" });
+    }, { threshold: 0.12, rootMargin: "0px 0px -40px 0px" }));
     els.forEach(function (el) { io.observe(el); });
   }
 
@@ -740,7 +779,7 @@
     els.forEach(function (el) {
       var target = parseInt(el.getAttribute("data-count"), 10), suffix = el.getAttribute("data-suffix") || "";
       if (!target || reduceMotion() || !("IntersectionObserver" in window)) return; // placeholders ("00") stay static
-      var io = new IntersectionObserver(function (en) {
+      var io = watch(new IntersectionObserver(function (en) {
         if (!en[0].isIntersecting) return;
         io.disconnect();
         var start = performance.now(), dur = 1600;
@@ -749,7 +788,7 @@
           el.textContent = Math.round(target * e) + suffix;
           if (p < 1) requestAnimationFrame(tick);
         })(start);
-      });
+      }));
       io.observe(el);
     });
   }
@@ -778,9 +817,9 @@
       numEl.textContent = num(i + 1);
     }
     activate(0);
-    var io = new IntersectionObserver(function (entries) {
+    var io = watch(new IntersectionObserver(function (entries) {
       entries.forEach(function (en) { if (en.isIntersecting) activate(parseInt(en.target.dataset.i, 10)); });
-    }, { rootMargin: "-45% 0px -45% 0px" });
+    }, { rootMargin: "-45% 0px -45% 0px" }));
     steps.forEach(function (s) { io.observe(s); });
   }
 
@@ -797,27 +836,23 @@
   function initServiceAside() {
     var links = document.querySelectorAll(".svc-aside nav a");
     if (!links.length || !("IntersectionObserver" in window)) return;
-    var io = new IntersectionObserver(function (entries) {
+    var io = watch(new IntersectionObserver(function (entries) {
       entries.forEach(function (en) {
         if (en.isIntersecting) links.forEach(function (l) { l.classList.toggle("active", l.getAttribute("href") === "#" + en.target.id); });
       });
-    }, { rootMargin: "-30% 0px -60% 0px" });
+    }, { rootMargin: "-30% 0px -60% 0px" }));
     document.querySelectorAll(".svc-block").forEach(function (b) { io.observe(b); });
   }
 
   /* ---------- Boot ---------- */
-  var PAGE_MAP = {
-    home: "home", services: "services", service: "service", investors: "investors", advisor: "advisor", how: "how",
-    about: "about", stories: "stories", story: "story", knowledge: "knowledge", article: "article", contact: "contact",
-    thanks: "thanks", legal: "legal", "404": "notFound"
-  };
-
   function renderAll() {
+    observers.forEach(function (o) { o.disconnect(); });
+    observers = [];
     T = window.CONTENT[lang];
     document.documentElement.lang = lang;
     document.documentElement.dir = lang === "ar" ? "rtl" : "ltr";
     applyMotion();
-    var key = PAGE_MAP[page] || "notFound";
+    var key = own(PAGES, page) ? page : "notFound"; // body data-page="404" falls through to notFound
     var titles = T.meta.titles;
     document.title = page === "home" ? titles.home : ((titles[key] || titles.notFound) + " | " + T.meta.siteName);
     renderHeader();
@@ -836,5 +871,12 @@
     initServiceAside();
   }
 
+  bindGlobal();
   renderAll();
+  // Content is drawn by JS after load, so the browser's own jump to #anchor
+  // (e.g. about.html#team) found nothing; do it now that the target exists.
+  if (location.hash.length > 1) {
+    var anchor = document.getElementById(decodeURIComponent(location.hash.slice(1)));
+    if (anchor) anchor.scrollIntoView();
+  }
 })();
