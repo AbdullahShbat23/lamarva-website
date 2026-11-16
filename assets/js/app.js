@@ -86,10 +86,10 @@
 
   /* ---------- Logo (official artwork, extracted from the door-sign file) ---------- */
   function logoLockup() {
-    return '<img class="logo-img" src="assets/img/logo-lockup.png" width="760" height="229" alt="LAMARVA Business Services">';
+    return '<img class="logo-img" src="assets/img/logo-lockup.webp" width="600" height="181" alt="LAMARVA Business Services">';
   }
   function markImg(cls) {
-    return '<img class="' + (cls || "") + '" src="assets/img/logo-mark.png" width="520" height="551" alt="" draggable="false">';
+    return '<img class="' + (cls || "") + '" src="assets/img/logo-mark.webp" width="520" height="551" alt="" draggable="false">';
   }
 
   /* ---------- Helpers ---------- */
@@ -141,6 +141,8 @@
     return '<section class="section"><div class="container"><div class="cta-band reveal">' +
       '<h2>' + title + "</h2><p>" + text + '</p><div class="hero-ctas">' + primaryCtas() + "</div></div></div></section>";
   }
+  // Screen-reader-only section heading, for pages whose first visible headings are card titles (h3).
+  function srH2(text) { return '<h2 class="sr-only">' + text + "</h2>"; }
   function checkList(items, cls) {
     return '<ul class="check-list ' + (cls || "") + '">' + items.map(function (i) { return "<li>" + ico("check") + "<span>" + i + "</span></li>"; }).join("") + "</ul>";
   }
@@ -348,7 +350,7 @@
       '<div class="svc-block" id="includes"><h2 class="reveal">' + b.includesTitle + '</h2><div class="reveal">' + checkList(sub ? sub.includes : s.includes, "cols-2") + "</div>" +
       (!sub && s.subs.length ? '<h3 style="margin-top:40px" class="reveal">' + b.subTitle + '</h3><div class="grid grid-2">' + s.subs.map(function (x, i) { return '<a class="card reveal d' + ((i % 2) + 1) + '" href="' + svcHref(s.slug, x.slug) + '"><h3>' + x.title + "</h3><p>" + x.text + '</p><span class="link-arrow">' + T.common.learnMore + arrow() + "</span></a>"; }).join("") + "</div>" : "") +
       "</div>" +
-      '<div class="svc-block" id="stages"><h2 class="reveal">' + b.stagesTitle + '</h2><ol class="timeline reveal">' + s.stages.map(function (st) { return "<li><h4>" + st.t + ' <span class="dur">' + st.dur + "</span></h4><p>" + st.d + "</p></li>"; }).join("") + "</ol>" +
+      '<div class="svc-block" id="stages"><h2 class="reveal">' + b.stagesTitle + '</h2><ol class="timeline reveal">' + s.stages.map(function (st) { return "<li><h3>" + st.t + ' <span class="dur">' + st.dur + "</span></h3><p>" + st.d + "</p></li>"; }).join("") + "</ol>" +
       '<div class="price-promise reveal">' + ico("clock") + "<p><strong>" + T.common.duration + ":</strong> " + s.totalDuration + "</p></div>" +
       '<div class="price-promise reveal">' + ico("shield") + "<p>" + T.common.noPrices + "</p></div></div>" +
       '<div class="svc-block" id="documents"><h2 class="reveal">' + b.documentsTitle + '</h2><div class="doc-grid">' + s.documents.map(function (d, i) { return '<div class="doc-item reveal d' + ((i % 2) + 1) + '">' + ico("doc") + "<span>" + d + "</span></div>"; }).join("") + '</div><p class="muted reveal" style="margin-top:18px;font-size:.92rem">' + b.documentsNote + "</p></div>" +
@@ -358,7 +360,7 @@
     return pageHero({ crumbs: crumbs, eyebrow: sub ? s.title : sp.eyebrow, title: sub ? sub.title : s.heroTitle, lead: sub ? sub.text : s.heroText, ctas: primaryCtas(), extra: tabs }) +
       '<section class="section"><div class="container svc-layout"><aside class="svc-aside"><nav aria-label="' + (sub ? sub.title : s.title) + '">' +
       navItems.map(function (n) { return '<a href="#' + n[0] + '">' + n[1] + "</a>"; }).join("") +
-      '</nav><div class="aside-cta"><h4>' + sp.asideTitle + "</h4><p>" + sp.asideText + '</p><a class="btn btn--gold btn--sm btn--block" href="contact.html">' + T.common.bookCta + "</a></div></aside>" +
+      '</nav><div class="aside-cta"><p class="aside-title">' + sp.asideTitle + "</p><p>" + sp.asideText + '</p><a class="btn btn--gold btn--sm btn--block" href="contact.html">' + T.common.bookCta + "</a></div></aside>" +
       "<div>" + blocks + "</div></div></section>" +
       bookingSection();
   };
@@ -377,7 +379,7 @@
   PAGES.how = function () {
     var h = T.how;
     return pageHero({ crumbs: [{ t: T.nav.home, href: "index.html" }, { t: T.nav.how }], eyebrow: h.eyebrow, title: h.title, lead: h.lead }) +
-      '<section class="section"><div class="container"><div class="steps6">' + h.steps.map(function (s, i) {
+      '<section class="section"><div class="container">' + srH2(h.eyebrow) + '<div class="steps6">' + h.steps.map(function (s, i) {
         return '<div class="card step6 reveal d' + ((i % 3) + 1) + '"><span class="sn gold-text"></span><h3>' + s.t + "</h3><p>" + s.d + "</p></div>";
       }).join("") + "</div></div></section>" +
       '<section class="section section--light"><div class="container advisor-preview"><div>' + sectionHead(T.about.eyebrow, h.promiseTitle) + '</div><div class="reveal">' + checkList(h.promise) + '<div class="price-promise" style="background:#fff;border-color:rgba(156,122,60,.3)">' + ico("shield") + '<p style="color:var(--text-dark)">' + T.common.noPrices + "</p></div></div></div></section>" +
@@ -388,7 +390,7 @@
     var a = T.about;
     return pageHero({ crumbs: [{ t: T.nav.home, href: "index.html" }, { t: T.nav.about }], eyebrow: a.eyebrow, title: a.title, lead: a.lead }) +
       '<section class="section"><div class="container vm-grid">' +
-      '<div class="reveal"><span class="eyebrow">' + a.storyTitle + "</span>" + a.story.map(function (p) { return '<p style="font-size:1.1rem">' + p + "</p>"; }).join("") + (a.storyNote ? '<p class="sample-flag" style="display:inline-block">' + a.storyNote + "</p>" : "") +
+      '<div class="reveal"><h2 class="eyebrow">' + a.storyTitle + "</h2>" + a.story.map(function (p) { return '<p style="font-size:1.1rem">' + p + "</p>"; }).join("") + (a.storyNote ? '<p class="sample-flag" style="display:inline-block">' + a.storyNote + "</p>" : "") +
       '<a class="btn btn--ghost" style="margin-top:12px" href="assets/docs/LAMARVA-Company-Profile.pdf" target="_blank" rel="noopener">' + ico("doc") + T.common.profileDownload + "</a></div>" +
       '<div class="card reveal d1"><span class="ico">' + ico("compass") + "</span><h3>" + a.vision.t + "</h3><p>" + a.vision.d + "</p></div>" +
       '<div class="card reveal d2"><span class="ico">' + ico("target") + "</span><h3>" + a.mission.t + "</h3><p>" + a.mission.d + "</p></div>" +
@@ -404,7 +406,7 @@
   PAGES.stories = function () {
     var s = T.storiesPage;
     return pageHero({ crumbs: [{ t: T.nav.home, href: "index.html" }, { t: T.nav.stories }], eyebrow: s.eyebrow, title: s.title, lead: s.lead }) +
-      '<section class="section"><div class="container"><div class="grid grid-3">' + T.stories.map(storyCard).join("") + "</div></div></section>" +
+      '<section class="section"><div class="container">' + srH2(T.common.allStories) + '<div class="grid grid-3">' + T.stories.map(storyCard).join("") + "</div></div></section>" +
       ctaBand(s.ctaTitle, T.home.final.text);
   };
 
@@ -417,7 +419,7 @@
     var block = function (t, d, icon) { return '<div class="card reveal"><span class="ico">' + ico(icon) + "</span><h3>" + t + "</h3><p>" + d + "</p></div>"; };
     return pageHero({ crumbs: [{ t: T.nav.home, href: "index.html" }, { t: T.nav.stories, href: "success-stories.html" }, { t: st.tag }], eyebrow: st.tag, title: st.title, lead: st.summary,
       extra: '<div class="story-metrics reveal d3" style="margin-top:28px">' + st.metrics.map(function (m) { return '<div><b class="gold-text">' + m.v + "</b><small>" + m.l + "</small></div>"; }).join("") + '</div><span class="sample-flag">' + T.common.sample + "</span>" }) +
-      '<section class="section"><div class="container"><div class="grid grid-3">' + block(s.challenge, st.challenge, "target") + block(s.approach, st.approach, "compass") + block(s.result, st.result, "check") + "</div></div></section>" +
+      '<section class="section"><div class="container">' + srH2(s.eyebrow) + '<div class="grid grid-3">' + block(s.challenge, st.challenge, "target") + block(s.approach, st.approach, "compass") + block(s.result, st.result, "check") + "</div></div></section>" +
       '<section class="section section--ink"><div class="container"><div class="grid grid-2">' + others.map(storyCard).join("") + "</div></div></section>" +
       ctaBand(s.ctaTitle, T.home.final.text);
   };
@@ -425,7 +427,7 @@
   PAGES.knowledge = function () {
     var k = T.knowledgePage;
     return pageHero({ crumbs: [{ t: T.nav.home, href: "index.html" }, { t: T.nav.knowledge }], eyebrow: k.eyebrow, title: k.title, lead: k.lead }) +
-      '<section class="section"><div class="container"><div class="grid grid-3">' + T.articles.map(articleCard).join("") + '</div><p class="muted" style="margin-top:32px;font-size:.9rem">' + k.disclaimer + "</p></div></section>" +
+      '<section class="section"><div class="container">' + srH2(T.common.allArticles) + '<div class="grid grid-3">' + T.articles.map(articleCard).join("") + '</div><p class="muted" style="margin-top:32px;font-size:.9rem">' + k.disclaimer + "</p></div></section>" +
       bookingSection();
   };
 
@@ -613,7 +615,7 @@
       return '<div class="field' + (extra && extra.full ? " full" : "") + '"><label for="' + id + '">' + label + '</label><input class="input" id="' + id + '" name="' + id + '" type="' + type + '"' + (extra && extra.attrs ? " " + extra.attrs : "") + ' required><span class="err">' + (type === "email" ? c.errors.email : c.errors.required) + "</span></div>";
     };
     return pageHero({ crumbs: [{ t: T.nav.home, href: "index.html" }, { t: T.nav.book }], eyebrow: c.eyebrow, title: c.title, lead: c.lead }) +
-      '<section class="section"><div class="container form-layout">' +
+      '<section class="section"><div class="container form-layout">' + srH2(c.eyebrow) +
       '<form class="form-card reveal" id="bookingForm" novalidate><div id="prefillNote"></div><div class="form-grid">' +
       req("name", f.name, "text", { full: true, attrs: 'autocomplete="name"' }) +
       req("email", f.email, "email", { attrs: 'autocomplete="email"' }) +
@@ -624,7 +626,7 @@
       '<div class="field"><span class="label" id="timeLbl">' + f.time + '</span><div class="chips" role="radiogroup" aria-labelledby="timeLbl">' + slots + "</div></div>" +
       '<div class="field full"><span class="label" id="modeLbl">' + f.mode + '</span><div class="chips" role="radiogroup" aria-labelledby="modeLbl">' + modes + "</div></div>" +
       '<div class="field full"><label for="message">' + f.message + ' <span class="opt">' + f.optional + '</span></label><textarea class="input" id="message" name="message" placeholder="' + f.messagePlaceholder + '"></textarea></div>' +
-      '<div class="field full"><label class="chip-check" style="display:flex;gap:12px;align-items:flex-start;font-weight:400;font-size:.9rem;cursor:pointer"><input type="checkbox" id="consent" name="consent" required style="margin-top:5px;accent-color:#c9a45c;width:18px;height:18px;flex-shrink:0"><span>' + f.consent.replace("Privacy Policy", '<a href="legal.html?p=privacy" style="color:var(--gold-light);text-decoration:underline">Privacy Policy</a>').replace("سياسة الخصوصية", '<a href="legal.html?p=privacy" style="color:var(--gold-light);text-decoration:underline">سياسة الخصوصية</a>') + '</span></label><span class="err">' + c.errors.consent + "</span></div>" +
+      '<div class="field full"><label class="chip-check" style="display:flex;gap:12px;align-items:flex-start;font-weight:400;font-size:.9rem;cursor:pointer"><input type="checkbox" id="consent" name="consent" required style="margin-top:2px;accent-color:#c9a45c;width:24px;height:24px;flex-shrink:0"><span>' + f.consent.replace("Privacy Policy", '<a href="legal.html?p=privacy" style="color:var(--gold-light);text-decoration:underline">Privacy Policy</a>').replace("سياسة الخصوصية", '<a href="legal.html?p=privacy" style="color:var(--gold-light);text-decoration:underline">سياسة الخصوصية</a>') + '</span></label><span class="err">' + c.errors.consent + "</span></div>" +
       '</div><button class="btn btn--gold btn--block" type="submit" style="margin-top:26px">' + c.submit + arrow() + '</button><p class="form-note">' + c.note + "</p></form>" +
       '<aside class="contact-aside"><div class="card wa-card reveal d1"><h3>' + c.asideTitle + "</h3><p>" + c.asideText + '</p><a class="btn btn--wa-solid btn--block" href="' + waLink() + '" target="_blank" rel="noopener">' + ico("whatsapp") + T.common.whatsapp + "</a></div>" +
       '<div class="card reveal d2"><h3>' + c.contactTitle + '</h3><div class="contact-aside">' +
@@ -638,11 +640,13 @@
 
   function advisorSummaryText(data) {
     var a = T.advisor;
-    if (!data || !a.questions[data.path]) return "";
-    var res = a.results[data.key];
+    // `data` comes back from sessionStorage, so treat every key in it as untrusted.
+    if (!data || !own(a.questions, data.path)) return "";
+    var res = own(a.results, data.key) ? a.results[data.key] : null;
+    var answers = data.answers || {};
     var lines = [a.eyebrow + " — " + a.paths[data.path].t, a.recTitle + ": " + (res ? res.title : "")];
     a.questions[data.path].forEach(function (q) {
-      if (data.answers[q.id]) lines.push("• " + q.q + " " + q.opts[data.answers[q.id]]);
+      if (own(q.opts, answers[q.id])) lines.push("• " + q.q + " " + q.opts[answers[q.id]]);
     });
     return lines.join("\n");
   }
@@ -651,12 +655,12 @@
     var form = document.getElementById("bookingForm");
     if (!form) return;
     var data = getSession("lmv-advisor");
-    if (data && data.path) {
+    if (data && own(T.advisor.questions, data.path)) {
       var c = data.contact || {};
       if (c.name) form.name.value = c.name;
       if (c.email) form.email.value = c.email;
       if (c.phone) form.phone.value = c.phone;
-      if (SERVICE_FOR_PATH[data.path]) form.service.value = SERVICE_FOR_PATH[data.path];
+      if (own(SERVICE_FOR_PATH, data.path)) form.service.value = SERVICE_FOR_PATH[data.path];
       form.message.value = advisorSummaryText(data);
       document.getElementById("prefillNote").innerHTML = '<div class="prefill-note">' + ico("spark") + "<span>" + T.contact.prefill + "</span></div>";
     }
@@ -676,6 +680,8 @@
       if (!ok) { first.focus(); return; }
       // NOTE: No backend yet. Connect this to a CRM / booking calendar / email service before launch.
       setSession("lmv-booking", { name: form.name.value.trim() });
+      // The advisor answers and contact details have served their purpose; don't leave them in the browser.
+      try { sessionStorage.removeItem("lmv-advisor"); } catch (err) {}
       location.href = "thank-you.html";
     });
     form.addEventListener("input", function (e) {
@@ -876,7 +882,8 @@
   // Content is drawn by JS after load, so the browser's own jump to #anchor
   // (e.g. about.html#team) found nothing; do it now that the target exists.
   if (location.hash.length > 1) {
-    var anchor = document.getElementById(decodeURIComponent(location.hash.slice(1)));
+    var anchor = null;
+    try { anchor = document.getElementById(decodeURIComponent(location.hash.slice(1))); } catch (err) { /* malformed %-escape in the address */ }
     if (anchor) anchor.scrollIntoView();
   }
 })();
