@@ -292,8 +292,11 @@
   PAGES.home = function () {
     var h = T.home;
     var layers = "";
-    for (var i = 10; i >= 1; i--) {
-      layers += '<div class="mono-layer mono-back" style="transform:translateZ(' + (-i * 1.5) + 'px)">' + markImg() + "</div>";
+    // Phones and tablets get 3 thicker layers instead of 10 thin ones: same depth, far less work to draw.
+    var lite = window.matchMedia("(max-width: 900px), (pointer: coarse)").matches;
+    var depth = lite ? 3 : 10, gap = 15 / depth;
+    for (var i = depth; i >= 1; i--) {
+      layers += '<div class="mono-layer mono-back" style="transform:translateZ(' + (-i * gap) + 'px)">' + markImg() + "</div>";
     }
     layers += '<div class="mono-layer" style="transform:translateZ(1px)">' + markImg() + "</div>";
 
@@ -324,7 +327,7 @@
       '<div><span class="eyebrow reveal">' + h.hero.eyebrow + '</span><h1 class="reveal d1">' + h.hero.title + '</h1><p class="hero-lead reveal d2">' + h.hero.lead + "</p>" +
       '<div class="hero-ctas reveal d3"><a class="btn btn--gold" href="contact.html">' + T.common.bookCta + arrow() + '</a><a class="btn btn--ghost" href="advisor.html">' + ico("spark") + T.common.tryAdvisor + "</a></div>" +
       '<p class="hero-note reveal d4">' + ico("shield") + h.hero.note + "</p></div>" +
-      '<div class="mono-stage reveal d2" id="monoStage" aria-hidden="true"><div class="mono-orbit o1"></div><div class="mono-orbit o2"></div><div class="mono-glow"></div><div class="mono-3d" id="mono3d"><div class="mono-spin">' + layers + "</div></div></div>" +
+      '<div class="mono-stage reveal d2' + (lite ? " mono-stage--lite" : "") + '" id="monoStage" aria-hidden="true"><div class="mono-orbit o1"></div><div class="mono-orbit o2"></div><div class="mono-glow"></div><div class="mono-3d" id="mono3d"><div class="mono-spin">' + layers + "</div></div></div>" +
       '</div><div class="scroll-cue" aria-hidden="true">' + h.scroll + "<i></i></div></section>" +
 
       '<section class="trust" aria-label="' + h.partnersLabel + '"><div class="container"><div class="trust-grid">' + trust + '</div><div class="partners"><small>' + h.partnersLabel + "</small>" + partners + "</div></div></section>" +
@@ -857,6 +860,11 @@
     var stage = document.getElementById("monoStage"), mono = document.getElementById("mono3d");
     if (!stage || !mono) return;
     var hero = stage.closest(".hero");
+    // Stop the logo animation while it is scrolled out of view.
+    if ("IntersectionObserver" in window) {
+      watch(new IntersectionObserver(function (en) { stage.classList.toggle("paused", !en[0].isIntersecting); })).observe(stage);
+    }
+    if (stage.classList.contains("mono-stage--lite")) return; // no mouse on phones/tablets
     hero.addEventListener("mousemove", function (e) {
       if (reduceMotion()) return;
       var r = hero.getBoundingClientRect();

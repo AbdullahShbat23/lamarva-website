@@ -24,3 +24,8 @@ site moves to its own domain. When the booking form is connected to an outside s
 add its address to `CSP_CONNECT` / `CSP_FORM_ACTION` in the script.
 
 Old addresses (`service.html?s=…`, `?lang=ar`) still work and forward to the new pages.
+
+## Fonts
+
+Fonts are served from `assets/fonts/` (no requests to Google). To refresh or change them, edit the list in
+`tools/fetch-fonts.py`, run `python tools/fetch-fonts.py`, then `node tools/build-pages.js`.

@@ -19,7 +19,7 @@ const vm = require("vm");
 const crypto = require("crypto");
 
 const SITE_URL = "https://abdullahshbat23.github.io/lamarva-website/";
-const VERSION = 7;
+const VERSION = 8;
 const ROOT = path.join(__dirname, "..");
 const LANGS = ["en", "ar"];
 const OG_IMAGE = { file: "assets/img/og-image.jpg", width: 1200, height: 630 };
@@ -126,8 +126,8 @@ function cspTag(html) {
   const policy = [
     "default-src 'self'",
     "script-src 'self'" + hashes.map((h) => " 'sha256-" + h + "'").join(""),
-    "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com", // inline style attributes are used in the markup
-    "font-src 'self' https://fonts.gstatic.com",
+    "style-src 'self' 'unsafe-inline'", // inline style attributes are used in the markup
+    "font-src 'self'",
     "img-src 'self' data:",
     "connect-src " + CSP_CONNECT.join(" "),
     "form-action " + CSP_FORM_ACTION.join(" "),
@@ -137,7 +137,6 @@ function cspTag(html) {
   return '<meta http-equiv="Content-Security-Policy" content="' + policy + '">';
 }
 
-const FONTS = "https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500;600&family=Inter:wght@400;500;600&family=El+Messiri:wght@400;500;600&family=IBM+Plex+Sans+Arabic:wght@400;500;600&display=swap";
 const NOSCRIPT = {
   en: "Please enable JavaScript to view this site.",
   ar: "يرجى تفعيل JavaScript لعرض هذا الموقع."
@@ -178,9 +177,7 @@ function page(o) {
     '<link rel="apple-touch-icon" href="assets/img/apple-touch-icon.png">',
     '<link rel="preload" href="assets/img/logo-lockup.webp" as="image" type="image/webp">',
     o.langFromStorage ? LANG_FROM_STORAGE : "",
-    '<link rel="preconnect" href="https://fonts.googleapis.com">',
-    '<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>',
-    '<link href="' + FONTS + '" rel="stylesheet">',
+    '<link rel="stylesheet" href="assets/css/fonts.css?v=' + VERSION + '">',  // self-hosted, see tools/fetch-fonts.py
     '<link rel="stylesheet" href="assets/css/styles.css?v=' + VERSION + '">',
     o.jsonLd ? '<script type="application/ld+json">' + o.jsonLd + "</script>" : ""
   ].filter(Boolean).join("\n");

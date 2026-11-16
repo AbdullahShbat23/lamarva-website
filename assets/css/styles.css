@@ -220,6 +220,10 @@ h2.eyebrow { font-family: var(--font-body); line-height: 1.65; }
 .mono-back img { filter: brightness(.38) saturate(.9); }
 .mono-layer:last-child img { filter: drop-shadow(0 0 28px rgba(236, 211, 154, .25)); }
 .reduce-motion .mono-spin, .reduce-motion .mono-orbit { animation: none; }
+.mono-stage.paused .mono-spin, .mono-stage.paused .mono-orbit { animation-play-state: paused; }
+/* Phones/tablets: skip the costly glow filter on the front layer (the soft glow behind it stays). */
+.mono-stage--lite .mono-layer:last-child img { filter: none; }
+.mono-stage--lite .mono-3d { transition: none; }
 .mono-glow { position: absolute; inset: 20%; border-radius: 50%; background: radial-gradient(circle, rgba(236,211,154,.35), transparent 65%); filter: blur(30px); }
 
 .scroll-cue { position: absolute; bottom: 28px; left: 50%; transform: translateX(-50%); display: flex; flex-direction: column; align-items: center; gap: 8px; font-size: 0.72rem; letter-spacing: .2em; text-transform: uppercase; color: var(--text-muted); z-index: 1; }
